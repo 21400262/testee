@@ -1,44 +1,132 @@
-![MagicMirror²: The open source modular smart mirror platform. ](.github/header.png)
+# 2020-1 Open Source Software Lab class #4 Project
 
-<p align="center">
-	<a href="https://david-dm.org/MichMich/MagicMirror"><img src="https://david-dm.org/MichMich/MagicMirror.svg" alt="Dependency Status"></a>
-	<a href="https://david-dm.org/MichMich/MagicMirror#info=devDependencies"><img src="https://david-dm.org/MichMich/MagicMirror/dev-status.svg" alt="devDependency Status"></a>
-	<a href="https://bestpractices.coreinfrastructure.org/projects/347"><img src="https://bestpractices.coreinfrastructure.org/projects/347/badge"></a>
-	<a href="http://choosealicense.com/licenses/mit"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
-	<a href="https://travis-ci.com/MichMich/MagicMirror"><img src="https://travis-ci.com/MichMich/MagicMirror.svg" alt="Travis"></a>
-	<a href="https://snyk.io/test/github/MichMich/MagicMirror"><img src="https://snyk.io/test/github/MichMich/MagicMirror/badge.svg" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/MichMich/MagicMirror" style="max-width:100%;"></a>
-</p>
+## 21400262 Hyeonmyeong Noh
 
-**MagicMirror²** is an open source modular smart mirror platform. With a growing list of installable modules, the **MagicMirror²** allows you to convert your hallway or bathroom mirror into your personal assistant. **MagicMirror²** is built by the creator of [the original MagicMirror](http://michaelteeuw.nl/tagged/magicmirror) with the incredible help of a [growing community of contributors](https://github.com/MichMich/MagicMirror/graphs/contributors).
+## Purpose
+People who live alone apart from the University usually have TV in their room as a optional furniture of the rent house. However we don't usually use it because we have smartphone and use Youtube application to watch programs. Therefore it would be useful to use the TV as a screen of the magic mirror. Magic mirror is a device that functions as mirror and screen to show customized information. Originally to make Magic Mirror, a piece of glass and a two-way mirror film have to be attached to the TV screen. But in this project I just created the inner programs and would show the resultant screen. Especially, I tried to show the information of COVID19.
 
-MagicMirror² focuses on a modular plugin system and uses [Electron](http://electron.atom.io/) as an application wrapper. So no more web server or browser installs necessary!
+## Result Image
+![Output](https://user-images.githubusercontent.com/64130293/84565197-8079e200-ada2-11ea-94d0-70708eac37c6.JPG)
 
-## Documentation
-For the full documentation including **[installation instructions](https://docs.magicmirror.builders/getting-started/installation.html)**, please visit our dedicated documentation website: [https://docs.magicmirror.builders](https://docs.magicmirror.builders).
+## Installation and Usage
+The basic software program can be downloaded in the [Magic Mirror](https://docs.magicmirror.builders/getting-started/installation.html#manual-installation).
+Click the link and follow the Manual Installation procedure.
 
-## Links
-- Website: [https://magicmirror.builders](https://magicmirror.builders)
-- Documentation: [https://docs.magicmirror.builders](https://docs.magicmirror.builders)
-- Forum: [https://forum.magicmirror.builders](https://forum.magicmirror.builders)
-- Discord: [https://discord.gg/J5BAtvx](https://discord.gg/J5BAtvx)
-- Blog: [https://michaelteeuw.nl/tagged/magicmirror](https://michaelteeuw.nl/tagged/magicmirror)
-- Donations: [https://magicmirror.builders/#donate](https://magicmirror.builders/#donate)
+For the automatic start of the program, install pm2.
+```
+sudo npm install -g pm2
+pm2 startup
+sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u pi --hp /home/pi
+pm2 start ~/MagicMirror/installers/mm.sh
+pm2 save
+```
 
-## Contributing Guidelines
+After saving the above setting, the Magic Mirror will be turned on automatically whenever you start raspberrypi.
+- pm2 Commands
+```
+pm2 start mm      : start Magic Mirror
+pm2 stop mm       : stop Magic Mirror
+pm2 restart mm    : restart Magic Mirror
+```
 
-Contributions of all kinds are welcome, not only in the form of code but also with regards bug reports and documentation. For the full contribution guidelines, check out: [https://docs.magicmirror.builders/getting-started/contributing.html](https://docs.magicmirror.builders/getting-started/contributing.html)
+Magic Mirror has default modules includig Clock, Calender, Current Weather, Weather Forecast, News Feed, Compliments, Hello World, Alert. Additional modules can be downloaded from [3rd Party Modules](https://github.com/MichMich/MagicMirror/wiki/3rd-party-modules).
+I uploaded a folder 'moduels' that I used in this project in this repository, but note that some modules are not available because I could not figure out how to use the modules. 'MMM-COVID19', 'clock', 'MMM-OnScreenMenu', 'MMM-EmbedYoutube' and 'newsfeed' can be displayed in this project.
+[Clock](https://github.com/MichMich/MagicMirror/tree/master/modules/default/clock) and [newsfeed](https://github.com/MichMich/MagicMirror/tree/master/modules/default/newsfeed) are default modules.
 
+To use other 3rd party modules, you should clone the git repository in the ~/MagicMirror/moduels folder, install and modify the configurations.
+**1. [MMM-COVID19](https://github.com/bibaldo/MMM-COVID19)**
+This module displays international COVID19 datas.
+Enter the commands below in your terminal.
+```
+cd ~/MagicMirror/modules
+git clone https://github.com/bibaldo/MMM-COVID19.git
+cd MMM-COVID19
+npm install
+```
+After installation, add the module in the modules array in the ```~/MagicMirror/config/config.js``` file:
+```
+cd ~/MagicMirror/config/config.js
+nano config.js
+```
+config.js
+```
+modules: [
+      {
+          module: "MMM-COVID19",
+          position: "bottom_right", ### There are 13 positions. Refer to [Module Configuration](https://docs.magicmirror.builders/modules/configuration.html#example).
+          config: {
+                updateInterval: 300000,
+      		worldStats: true,
+      		delta: true,
+      		lastUpdateInfo: true,
+                  countries: ["S. Korea", "USA", "China", "Japan"],
+                  headerRowClass: "small",
+      		rapidapiKey : "0ab64e7c61mshcb8650033f0e939p1c653ajsn95784b21f789" ### You can get your rapidapiKey in [Coronavirus monitor API Documentation](https://rapidapi.com/astsiatsko/api/coronavirus-monitor).
+                   ... ### other configuration options are listed in [MMM-COVID19](https://github.com/bibaldo/MMM-COVID19).
+          }
+      },
+]
+```
 
-## Enjoying MagicMirror? Consider a donation!
+**2. [MMM-EmbedYoutube](https://github.com/nitpum/MMM-EmbedYoutube)**
+This module displays youtube streaming block.
+Enter the commands below in your terminal.
+```
+cd ~/MagicMirror/modules
+git https://github.com/nitpum/MMM-EmbedYoutube.git
+cd MMM-EmbedYoutube
+npm install
+```
+After installation, edit the config.js file.
+```
+{
+      module: "MMM-EmbedYoutube", 
+	position: "top_left",	
+	config: {
+		video_id: "NMre6IAAAiU", ### This is in the youtube URL 'https://www.youtube.com/watch?v=NMre6IAAAiU'
+		loop: false
+	}
+},
+```
 
-MagicMirror² is opensource and free. That doesn't mean we don't need any money.
+**3. [MMM-OnScreenMenu](https://github.com/shbatm/MMM-OnScreenMenu)**
+This module let us control the modules and Magic Mirror program.
+Enter the commands below in your terminal.
+```
+cd ~/MagicMirror/modules
+git https://github.com/shbatm/MMM-OnScreenMenu.git
+cd MMM-OnScreenMenu
+npm install
+```
+After installation, edit the config.js file.
+```
+{
+	module: "MMM-OnScreenMenu",
+	position: "bottom_right",
+	/* Valid positions: 'top_right', 'top_left', 'bottom_right', 'bottom_left' */
+	config: {
+		touchMode: false,
+		enableKeyboard: true,
+		menuItems: {
+			reboot: { title: "Reboot", icon: "spinner" },
+			shutdown: { title: "Shutdown", icon: "power-off" },
+			moduleHide1: { title: "Hide Youtube", icon: "minus-square", name: "MMM-EmbedYoutube" },
+			moduleShow1: { title: "Show Youtube", icon: "plus-square", name: "MMM-EmbedYoutube" },
+			moduleHide2: { title: "Hide json-feed", icon: "minus-square", name: "MMM-json-feed" },
+			moduleShow2: { title: "Show json-feed", icon: "plus-square", name: "MMM-json-feed" },
+		}
+	}
+},
+```
 
-Please consider a donation to help us cover the ongoing costs like webservers and email services.
-If we receive enough donations we might even be able to free up some working hours and spend some extra time improving the MagicMirror² core.
+**4. [newsfeed](https://github.com/MichMich/MagicMirror/tree/master/modules/default/newsfeed)**
+This module displays real time news.
+The newsfeed URL in config.js file comes from [Yeonhapnews](http://www.yonhapnewstv.co.kr/category/news/international/feed/).
 
-To donate, please follow [this](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=G5D8E9MR5DTD2&source=url) link.
+To check the config for error, enter ```npm run config:check``` in command.
 
-<p align="center">
-<br>
-	<a href="https://forum.magicmirror.builders/topic/728/magicmirror-is-voted-number-1-in-the-magpi-top-50"><img src="https://magicmirror.builders/img/magpi-best-watermark-custom.png" width="150" alt="MagPi Top 50"></a>
-</p>
+## Useful tool
+[Download VNC Viewer](https://www.realvnc.com/en/connect/download/viewer/) this program will help you to test the Magic Mirror program. This displays raspberrypi screen. in your desktop.
+
+## Limitation
+Actually, what I tried to do in this project is to create graphs and charts to show the real time COVID19 information from [LiveCoronaDetector](https://github.com/LiveCoronaDetector/livecod/tree/master/data). I found out several methods to create a module to display graphs in the Magic Mirror, but unfortunately I failed to understand the codes written in js files and other visualazation languages and to create the module.
